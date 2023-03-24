@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+int main() {
+    int notas[] = {100, 50, 20, 10, 5, 2};
+    float moedas[] = {1.0, 0.50, 0.25, 0.10, 0.05, 0.01};
+    int qtd_notas[6] = {0};
+    int qtd_moedas[6] = {0};
+
+    float valor;
+    printf("Digite o valor: ");
+    scanf("%f", &valor);
+
+    int valor_int = (int) valor;
+    float valor_centavos = valor - valor_int;
+
+    for (int i = 0; i < 6; i++) {
+        qtd_notas[i] = valor_int / notas[i];
+        valor_int %= notas[i];
+
+        qtd_moedas[i] = valor_centavos / moedas[i];
+        valor_centavos -= qtd_moedas[i] * moedas[i];
+    }
+
+    printf("NOTAS:\n");
+    for (int i = 0; i < 6; i++) {
+        printf("%d nota(s) de R$ %d.00\n", qtd_notas[i], notas[i]);
+    }
+
+    printf("MOEDAS:\n");
+    for (int i = 0; i < 6; i++) {
+        printf("%d moeda(s) de R$ %.2f\n", qtd_moedas[i], moedas[i]);
+    }
+
+    return 0;
+}
