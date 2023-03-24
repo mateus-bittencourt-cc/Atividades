@@ -1,0 +1,68 @@
+#include <stdio.h>
+
+int main() {
+    
+	float Valor;
+    
+	int Notas100, Notas50, Notas20, Notas10, Notas5, Notas2;
+    
+	int Moedas1, Moedas50, Moedas25, Moedas10, Moedas5, Moedas1c;
+
+    printf("Digite o valor Financial: \n ");
+    scanf("%f", &Valor);
+
+    int Centavos = (int)(valor * 100);
+
+    Notas100 = Centavos / 10000;
+    Centavos %= 10000;
+
+    Notas50 = Centavos / 5000;
+    Centavos %= 5000;
+
+    Notas20 = Centavos / 2000;
+    Centavos %= 2000;
+
+    Notas10 = Centavos / 1000;
+    Centavos %= 1000;
+
+    Notas5 = Centavos / 500;
+    Centavos %= 500;
+
+    Notas2 = Centavos / 200;
+    Centavos %= 200;
+
+    Moedas1 = Centavos / 100;
+    Centavos %= 100;
+
+    Moedas50 = Centavos / 50;
+    Centavos %= 50;
+
+    Moedas25 = Centavos / 25;
+    Centavos %= 25;
+
+    Moedas10 = Centavos / 10;
+    Centavos %= 10;
+
+    Moedas5 = Centavos / 5;
+    Centavos %= 5;
+
+    Moedas1c = Centavos;
+
+    printf("NOTAS:\n");
+    printf("%d nota(s) de R$ 100.00\n", Notas100);
+    printf("%d nota(s) de R$ 50.00\n", Notas50);
+    printf("%d nota(s) de R$ 20.00\n", Notas20);
+    printf("%d nota(s) de R$ 10.00\n", Notas10);
+    printf("%d nota(s) de R$ 5.00\n", Notas5);
+    printf("%d nota(s) de R$ 2.00\n", Notas2);
+
+    printf("MOEDAS:\n");
+    printf("%d moeda(s) de R$ 1.00\n", Moedas1);
+    printf("%d moeda(s) de R$ 0.50\n", Moedas50);
+    printf("%d moeda(s) de R$ 0.25\n", Moedas25);
+    printf("%d moeda(s) de R$ 0.10\n", Moedas10);
+    printf("%d moeda(s) de R$ 0.05\n", Moedas5);
+    printf("%d moeda(s) de R$ 0.01\n", Moedas1c);
+
+    return 0;
+}
