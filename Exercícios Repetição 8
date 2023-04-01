@@ -1,0 +1,76 @@
+#include <stdio.h>
+
+int main() {
+
+    int num_mulheres = 0;
+    int num_mulheres_18_35 = 0;
+    int num_mulheres_18_35_castanhos = 0;
+
+
+    char sexo, cor_olhos, cor_cabelos;
+    int idade, salario;
+
+    while (1) {
+
+        printf("Informe o sexo (m/f): ");
+        scanf(" %c", &sexo);
+        
+        while (sexo != 'm' && sexo != 'f') {
+            printf("Sexo inválido. Informe o sexo (m/f): ");
+            scanf(" %c", &sexo);
+        }
+
+        printf("Informe a cor dos olhos (a/v/c/p): ");
+        scanf(" %c", &cor_olhos);
+        
+        while (cor_olhos != 'a' && cor_olhos != 'v' && cor_olhos != 'c' && cor_olhos != 'p') {
+            printf("Cor dos olhos inválida. Informe a cor dos olhos (a/v/c/p): ");
+            scanf(" %c", &cor_olhos);
+        }
+
+        printf("Informe a cor dos cabelos (l/c/p/r): ");
+        scanf(" %c", &cor_cabelos);
+        
+        while (cor_cabelos != 'l' && cor_cabelos != 'c' && cor_cabelos != 'p' && cor_cabelos != 'r') {
+            printf("Cor dos cabelos inválida. Informe a cor dos cabelos (l/c/p/r): ");
+            scanf(" %c", &cor_cabelos);
+        }
+
+        printf("Informe a idade (entre 10 e 100 anos): ");
+        scanf("%d", &idade);
+        
+        while (idade < 10 || idade > 100) {
+            printf("Idade inválida. Informe a idade (entre 10 e 100 anos): ");
+            scanf("%d", &idade);
+        }
+
+        printf("Informe o salário: ");
+        scanf("%d", &salario);
+        
+        while (salario < 0) {
+            printf("Salário inválido. Informe o salário: ");
+            scanf("%d", &salario);
+        }
+
+
+        if (sexo == 'f') {
+            num_mulheres++;
+
+            
+            if (idade >= 18 && idade <= 35 && cor_olhos == 'c' && cor_cabelos == 'c') {
+                num_mulheres_18_35_castanhos++;
+            }
+        }
+
+ 
+        if (idade == -1) {
+            break;
+        }
+    }
+
+    float porcentagem_mulheres_18_35_castanhos = ((float) num_mulheres_18_35_castanhos / num_mulheres) * 100;
+
+    printf("\nTotal de mulheres: %d\n", num_mulheres);
+    printf("As mulheres com olhos castanhos e cabelos castanhos com a idade entre 18 e 35 anos são de: %d\n"; num_mulheres_18_35_castanhos);    
+
+}
