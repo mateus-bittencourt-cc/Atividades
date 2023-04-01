@@ -1,0 +1,26 @@
+ #include <stdio.h>
+
+ 
+ int main (){
+ 	
+int inicial;
+int final;
+
+printf("Digite um valor inteiro positivo:");
+scanf("%d", &final);
+
+for(inicial = 0; inicial == final; inicial++){
+	
+	printf("_%d_", inicial);
+}
+
+
+
+
+ 	
+ 	
+ 	
+ 	
+return 0;
+ 	
+ }
