@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+float calculoMedio(float n1, float n2, float n3) {
+    float media = (n1 + n2 + n3) / 3.0;
+    return media;
+}
+
+int main() {
+    int NEstudantes;
+    printf("Digite o número de estudantes: ");
+    scanf("%d", &NEstudantes);
+
+    for (int i = 1; i <= NEstudantes; i++) {
+        printf("Digite as notas (separadas por espaço) do estudante %d: ", i);
+        float n1, n2, n3;
+        scanf("%f_%f_%f", &n1, &n2, &n3);
+
+        float media = calculoMedio(n1, n2, n3);
+
+        printf("A media ponderada do estudante %d é a seguinte: %.2f.\n", i, media);
+    }
+
+    return 0;
+}
