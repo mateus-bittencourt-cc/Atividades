@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+int main() {
+    int numero, maior, menor;
+    int primeiro_numero = 1;
+
+    while (1) {
+        printf("Digite um número (negativo para encerrar): ");
+        scanf("%d", &numero);
+
+        if (numero < 0) {
+            break;
+        }
+
+        if (primeiro_numero) {
+            maior = menor = numero;
+            primeiro_numero = 0;
+        } else {
+            if (numero > maior) {
+                maior = numero;
+            }
+            if (numero < menor) {
+                menor = numero;
+            }
+        }
+    }
+
+    if (primeiro_numero) {
+        printf("Nenhum número foi digitado.\n");
+    } else {
+        printf("O maior número digitado foi: %d\n", maior);
+        printf("O menor número digitado foi: %d\n", menor);
+    }
+
+    return 0;
+}
