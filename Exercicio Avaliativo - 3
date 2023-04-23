@@ -1,20 +1,22 @@
 #include <stdio.h>
+#define PI 3.14159
 
-#define PI 3.14159 // Definindo a constante PI
+main() 
+{
+    float Raio; 
+    float Area;
+    float Volume;
 
-int main() {
-    float raio, area, volume;
+    printf("Digite o valor do raio da esfera que deseja calcular: ");
+    scanf("%f", &Raio);
 
-    printf("Digite o valor do raio da esfera: ");
-    scanf("%f", &raio);
-
-    // Cálculo da área da superfície
-    area = 4 * PI * raio * raio;
-    printf("Área da superfície: %.2f\n", area);
-
-    // Cálculo do volume
-    volume = (4.0/3) * PI * raio * raio * raio;
-    printf("Volume da esfera: %.2f\n", volume);
+    Area = 4 * PI * Raio * Raio;
+    
+    printf("Área da superfície da esfera: %.2f\n", Area);
+    
+    Volume = (4.0/3) * PI * Raio * Raio * Raio;
+    
+    printf("Volume da esfera é de: %.2f\n", Volume);
 
     return 0;
 }
