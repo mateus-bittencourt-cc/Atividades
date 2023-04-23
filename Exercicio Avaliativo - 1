@@ -1,27 +1,29 @@
 #include <stdio.h>
 
-int main() {
-    int A, B, C, D, diferenca;
+main() {
     
-    // Lendo os valores de A, B, C e D
-    printf("Digite o valor de A: ");
+    int A; 
+    int B; 
+    int C; 
+    int D; 
+    int diferenca;
+    
+    printf("Digite o quanto vale  A: ");
     scanf("%d", &A);
     
-    printf("Digite o valor de B: ");
+    printf("Digite o quanto vale B: ");
     scanf("%d", &B);
     
-    printf("Digite o valor de C: ");
+    printf("Digite o quanto vale C: ");
     scanf("%d", &C);
     
-    printf("Digite o valor de D: ");
+    printf("Digite o quanto vale D: ");
     scanf("%d", &D);
     
-    // Calculando a diferença
     diferenca = A * B - C * D;
     
-    // Imprimindo o resultado
-    printf("DIFERENCA = (%d * %d - %d * %d)\n", A, B, C, D);
-    printf("DIFERENCA = %d\n", diferenca);
+    printf("diferenca = (%d * %d - %d * %d)\n", A, B, C, D);
+    printf("diferenca = %d\n", diferenca);
     
     return 0;
 }
