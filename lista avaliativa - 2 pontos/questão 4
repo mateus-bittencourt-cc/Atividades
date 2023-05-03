@@ -16,7 +16,9 @@ char permitiSexo() {
 
 
 float validaSalario() {
+    
     float salario;
+    
     do {
         printf("Digite o salário: R$ ");
         scanf("%f", &salario);
