@@ -1,12 +1,13 @@
 #include <stdio.h>
-
 #define MIN_TIMES 3
 #define MAX_TIMES 9
 #define MIN_JOGADORES 6
 #define MAX_JOGADORES 11
 
-int main() {
+int main() 
+{
     int numTimes;
+    
     do {
         printf("Informe o número de times inscritos (entre %d e %d): ", MIN_TIMES, MAX_TIMES);
         scanf("%d", &numTimes);
