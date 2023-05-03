@@ -8,7 +8,8 @@ int main()
 {
     int numTimes;
     
-    do {
+    do 
+    {
         printf("Informe o número de times inscritos (entre %d e %d): ", MIN_TIMES, MAX_TIMES);
         scanf("%d", &numTimes);
     } while (numTimes < MIN_TIMES || numTimes > MAX_TIMES);
@@ -16,32 +17,40 @@ int main()
     int numJogadores, idade, peso, qtdMenores = 0, qtdMais80 = 0;
     float somaIdades, somaPesos = 0.0;
 
-    for (int i = 1; i <= numTimes; i++) {
-        do {
+    for (int i = 1; i <= numTimes; i++) 
+    {
+        do 
+        {
             printf("Time %d - Informe o número de jogadores inscritos (entre %d e %d): ", i, MIN_JOGADORES, MAX_JOGADORES);
             scanf("%d", &numJogadores);
+            
         } while (numJogadores < MIN_JOGADORES || numJogadores > MAX_JOGADORES);
 
         float somaIdadesTime = 0.0;
         int numJogMais25 = 0;
 
-        for (int j = 1; j <= numJogadores; j++) {
+        for (int j = 1; j <= numJogadores; j++) 
+        {
             printf("Time %d - Jogador %d - Informe a idade: ", i, j);
             scanf("%d", &idade);
+            
             printf("Time %d - Jogador %d - Informe o peso: ", i, j);
             scanf("%d", &peso);
 
             somaIdadesTime += idade;
 
-            if (idade < 18) {
+            if (idade < 18) 
+            {
                 qtdMenores++;
             }
 
-            if (peso > 80) {
+            if (peso > 80) 
+            {
                 qtdMais80++;
             }
 
-            if (idade > 25) {
+            if (idade > 25) 
+            {
                 somaPesos += peso;
                 numJogMais25++;
             }
@@ -50,15 +59,19 @@ int main()
         float mediaIdadesTime = somaIdadesTime / numJogadores;
         printf("Time %d - Média de idade dos jogadores: %.1f\n", i, mediaIdadesTime);
 
-        if (numJogMais25 > 0) {
+        if (numJogMais25 > 0) 
+        {
             float mediaPesosMais25 = somaPesos / numJogMais25;
             printf("Time %d - Média de peso dos jogadores acima de 25 anos: %.1f\n", i, mediaPesosMais25);
-        } else {
+            
+        } else 
+        {
             printf("Time %d - Não há jogadores com mais de 25 anos inscritos.\n", i);
         }
     }
 
     float percMais80 = (float) qtdMais80 / (numTimes * numJogadores) * 100;
+    
     printf("Quantidade de jogadores menores de idade (18 anos): %d\n", qtdMenores);
     printf("Quantidade de jogadores com mais de 80 quilos: %d (%.2f%%)\n", qtdMais80, percMais80);
 
