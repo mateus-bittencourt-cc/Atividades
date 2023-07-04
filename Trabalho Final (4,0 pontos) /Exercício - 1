@@ -2,107 +2,114 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct 
+{
     char codigo[20];
     char descricao[100];
     int quantidade;
     float valor;
+
 } Produto;
 
-Produto estoque[100];
-int numProdutos = 0;
+Produto Estoque[100];
+int Num_Produtos = 0;
 
 void inicializarEstoque() {
-    numProdutos = 0;
+    Num_Produtos = 0;
 }
 void adicionarProduto() {
     Produto produto;
 
     printf("Informe o codigo do produto: ");
-    scanf("%s", produto.codigo);
+    scanf("%s", Produto_codigo);
 
     printf("Informe a descricao do produto: ");
-    scanf(" %[^\n]", produto.descricao);
+    scanf(" %[^\n]", Produto_descricao);
 
     printf("Informe a quantidade do produto: ");
-    scanf("%d", &produto.quantidade);
+    scanf("%d", &Produto_quantidade);
 
     printf("Informe o valor do produto: ");
-    scanf("%f", &produto.valor);
+    scanf("%f", &Produto_valor);
 
-    estoque[numProdutos] = produto;
-    numProdutos++;
+    Estoque[Num_Produtos] = Produto;
+    Num_Produtos++;
 
     printf("Produto adicionado ao estoque.\n");
 }
 
-void gerarRelatorio() {
+void Gerar_Relatorio() 
+{
     printf("Relatorio de Produtos:\n");
 
-    for (int i = 0; i < numProdutos; i++) {
-        Produto produto = estoque[i];
+    for (int i = 0; i < Num_Produtos; i++) 
+{
+        Produto produto = Estoque[i];
 
-        printf("Codigo: %s\n", produto.codigo);
-        printf("Descricao: %s\n", produto.descricao);
-        printf("Quantidade: %d\n", produto.quantidade);
-        printf("Valor: R$ %.2f\n", produto.valor);
+        printf("Codigo: %s\n", Produto_codigo);
+        printf("Descricao: %s\n", Produto_descricao);
+        printf("Quantidade: %d\n", Produto_quantidade);
+        printf("Valor: R$ %.2f\n", Produto_valor);
         printf("\n");
     }
 }
 
-void pesquisarProduto() {
-    char codigo[20];
-    int encontrado = 0;
+void Pesquisar_Produto() 
+{
+    char Codigo[20];
+    int Encontrado = 0;
 
     printf("Informe o codigo do produto: ");
-    scanf("%s", codigo);
+    scanf("%s", Codigo);
 
-    for (int i = 0; i < numProdutos; i++) {
-        Produto produto = estoque[i];
+    for (int i = 0; i < Num_Produtos; i++) 
+{
+        Produto produto = Estoque[i];
 
         if (strcmp(produto.codigo, codigo) == 0) {
             printf("Produto encontrado:\n");
-            printf("Codigo: %s\n", produto.codigo);
-            printf("Descricao: %s\n", produto.descricao);
-            printf("Quantidade: %d\n", produto.quantidade);
-            printf("Valor: R$ %.2f\n", produto.valor);
+            printf("Codigo: %s\n", Produto_codigo);
+            printf("Descricao: %s\n", Produto_descricao);
+            printf("Quantidade: %d\n", Produto_quantidade);
+            printf("Valor: R$ %.2f\n", Produto_valor);
             encontrado = 1;
             break;
         }
     }
 
-    if (!encontrado) {
+    if (!Encontrado) 
+{
         printf("Produto nao encontrado.\n");
     }
 }
 
-void removerProduto() {
-    char codigo[20];
-    int encontrado = 0;
+void Remover_Produto() {
+    char Codigo[20];
+    int Encontrado = 0;
 
     printf("Informe o codigo do produto a ser removido: ");
-    scanf("%s", codigo);
+    scanf("%s", Codigo);
 
-    for (int i = 0; i < numProdutos; i++) {
-        Produto produto = estoque[i];
+    for (int i = 0; i < Num_Produtos; i++) {
+        Produto produto = Estoque[i];
 
-        if (strcmp(produto.codigo, codigo) == 0) {
-            for (int j = i; j < numProdutos - 1; j++) {
-                estoque[j] = estoque[j+1];
+        if (strcmp(Produto_codigo, codigo) == 0) {
+            for (int j = i; j < Num_Produtos - 1; j++) {
+                Estoque[j] = Estoque[j+1];
             }
-            numProdutos--;
+            Num_Produtos--;
             printf("Produto removido do estoque.\n");
-            encontrado = 1;
+            Encontrado = 1;
             break;
         }
     }
 
-    if (!encontrado) {
+    if (!Encontrado) {
         printf("Produto nao cadastrado no estoque.\n");
     }
 }
 
-void exibirMenu() {
+void Exibir_Menu() {
     printf(" !Mercado do seu Jao! \n");
     printf("1 - Cadastrar produto\n");
     printf("2 - Consultar produtos\n");
@@ -112,27 +119,27 @@ void exibirMenu() {
 }
 
 int main() {
-    int opcao;
+    int Opcao;
 
-    inicializarEstoque();
+    Inicializar_Estoque();
 
     do {
-        exibirMenu();
+        Exibir_Menu();
         printf("Informe a opcao desejada: ");
-        scanf("%d", &opcao);
+        scanf("%d", &Opcao);
 
-        switch (opcao) {
+        switch (Opcao) {
             case 1:
-                adicionarProduto();
+                Adicionar_Produto();
                 break;
             case 2:
-                pesquisarProduto();
+                Pesquisar_Produto();
                 break;
             case 3:
-                gerarRelatorio();
+                Gerar_Relatorio();
                 break;
             case 4:
-                removerProduto();
+                Remover_Produto();
                 break;
             case 0:
                 break;
@@ -140,7 +147,7 @@ int main() {
                 printf("Opcao invalida. Tente novamente.\n");
                 break;
         }
-    } while (opcao != 0);
+    } while (Opcao != 0);
 
     return 0;
 }
