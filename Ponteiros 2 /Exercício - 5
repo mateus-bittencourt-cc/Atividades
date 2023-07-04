@@ -9,7 +9,6 @@ int main() {
         scanf("%d", &array[i]);
     }
 
-    // Impressão do dobro de cada valor
     printf("O dobro de cada valor lido:\n");
     for (i = 0; i < 5; i++) {
         int* ptr = &array[i];
