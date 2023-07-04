@@ -1,44 +1,50 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Restaurante {
-    char nome[100];
-    char endereco[100];
-    float precoMedio;
-    char comidaservida[100];
+typedef struct Restaurante 
+{
+    char Nome[100];
+    char Endereco[100];
+    float Preco_Medio;
+    char Comida_Servida[100];
     struct Restaurante* proximo;
+
 } Restaurante;
 
-Restaurante* solicitarDados() {
-    Restaurante* novoRestaurante = (Restaurante*)malloc(sizeof(Restaurante));
+Restaurante* Solicitar_Dados() 
+{
+    Restaurante* Novo_Restaurante = (Restaurante*)malloc(sizeof(Restaurante));
 
     printf("Nome do restaurante: ");
-    scanf(" %[^\n]", novoRestaurante->nome);
+    scanf(" %[^\n]", Novo_Restaurante->Nome);
 
     printf("Endereco do restaurante: ");
-    scanf(" %[^\n]", novoRestaurante->endereco);
+    scanf(" %[^\n]", Novo_Restaurante->Endereco);
 
     printf("Preco medio: ");
-    scanf("%f", &novoRestaurante->precoMedio);
+    scanf("%f", &Novo_Restaurante->Preco_Medio);
 
     printf("Tipo de comida: ");
-    scanf(" %[^\n]", novoRestaurante->comidaservida);
+    scanf(" %[^\n]", Novo_Restaurante->Comida_Servida);
 
-    novoRestaurante->proximo = NULL;
+    Novo_Restaurante->proximo = NULL;
 
-    return novoRestaurante;
+    return Novo_Restaurante;
 }
 
-void listadeRestaurantes(Restaurante* lista) {
-    Restaurante* atual = lista;
-    if (atual == NULL) {
+void listadeRestaurantes(Restaurante* lista) 
+{
+    Restaurante* Atual = Lista;
+    if (Atual == NULL) 
+    {
         printf("Nao tem nenhum restaurante registrado.\n");
     } else {
-        while (atual != NULL) {
+        while (Atual != NULL) 
+        {
             printf("Nome: %s\n", atual->nome);
-            printf("Endereco: %s\n", atual->endereco);
-            printf("Preco medio: %.2f\n", atual->precoMedio);
-            printf("Tipo de comida: %s\n", atual->comidaservida);
+            printf("Endereco: %s\n", atual->Endereco);
+            printf("Preco medio: %.2f\n", atual->Preco_Medio);
+            printf("Tipo de comida: %s\n", atual->Comida_Servida);
             printf("\n");
 
             atual = atual->proximo;
@@ -46,8 +52,9 @@ void listadeRestaurantes(Restaurante* lista) {
     }
 }
 
- main() {
-    Restaurante* listaRestaurantes = NULL;
+ main() 
+{
+    Restaurante* Lista_Restaurantes = NULL;
 
     int opcao;
 
@@ -61,25 +68,25 @@ void listadeRestaurantes(Restaurante* lista) {
 
         switch (opcao) {
             case 1: {
-                Restaurante* novoRestaurante = solicitarDados();
+                Restaurante* Novo_Restaurante = Solicitar_Dados();
 
                 if (listaRestaurantes == NULL) {
-                    listaRestaurantes = novoRestaurante;
+                    listaRestaurantes = Novo_Restaurante;
                 } else {
-                    Restaurante* atual = listaRestaurantes;
+                    Restaurante* atual = Lista_Restaurantes;
 
                     while (atual->proximo != NULL) {
-                        atual = atual->proximo;
+                        Atual = Atual->proximo;
                     }
 
-                    atual->proximo = novoRestaurante;
+                    Atual->proximo = Novo_Restaurante;
                 }
 
-                printf("Restaurante novo adicionado com sucesso.\n\n");
+                printf("Restaurante novo adicionado com sucesso.\n");
                 break;
             }
             case 2: {
-                listadeRestaurantes(listaRestaurantes);
+                lista_de_Restaurantes(Lista_Restaurantes);
                 break;
             }
             case 0: {
