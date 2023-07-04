@@ -7,6 +7,7 @@ typedef struct Dieta
     float Peso;
     int Calorias;
     struct Dieta* proximo;
+
 } Dieta;
 
 Dieta* Solicitar_Dados() {
