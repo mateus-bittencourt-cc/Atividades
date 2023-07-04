@@ -1,49 +1,50 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Dieta {
-    char comida[100];
-    float peso;
-    int calorias;
+typedef struct Dieta 
+{
+    char Comida[100];
+    float Peso;
+    int Calorias;
     struct Dieta* proximo;
 } Dieta;
 
-Dieta* solicitarDados() {
-    Dieta* novaComida = (Dieta*)malloc(sizeof(Dieta));
+Dieta* Solicitar_Dados() {
+    Dieta* Nova_Comida = (Dieta*)malloc(sizeof(Dieta));
 
     printf("Nome da comida: ");
-    scanf(" %[^\n]", novaComida->comida);
+    scanf(" %[^\n]", Nova_Comida->Comida);
 
     printf("Peso da comida: ");
-    scanf("%f", &novaComida->peso);
+    scanf("%f", &Nova_Comida->Peso);
 
     printf("Quantidade de calorias: ");
-    scanf("%d", &novaComida->calorias);
+    scanf("%d", &Nova_Comida->Calorias);
 
-    novaComida->proximo = NULL;
+    Nova_Comida->proximo = NULL;
 
-    return novaComida;
+    return Nova_Comida;
 }
 
-void listadecomidas(Dieta* lista) {
-    Dieta* atual = lista;
+void Lista_de_Comidas(Dieta* lista) {
+    Dieta* Atual = Lista;
 
-    if (atual == NULL) {
+    if (Atual == NULL) {
         printf("Nenhuma comida foi registrada.\n");
     } else {
-        while (atual != NULL) {
-            printf("Nome da comida: %s\n", atual->comida);
-            printf("Peso da comida: %.2f\n", atual->peso);
-            printf("Quantidade de calorias: %d\n", atual->calorias);
+        while (Atual != NULL) {
+            printf("Nome da comida: %s\n", Atual->Comida);
+            printf("Peso da comida: %.2f\n", Atual->Peso);
+            printf("Quantidade de calorias: %d\n", Atual->Calorias);
             printf("\n");
 
-            atual = atual->proximo;
+            Atual = Atual->proximo;
         }
     }
 }
 
  main() {
-    Dieta* listaComidas = NULL;
+    Dieta* Lista_Comidas = NULL;
 
     int opcao;
 
@@ -53,29 +54,29 @@ void listadecomidas(Dieta* lista) {
         printf("2 -- Listar todas as comidas --\n");
         printf("0 -- Sair --\n");
         printf("Opcao: ");
-        scanf("%d", &opcao);
+        scanf("%d", &Opcao);
 
-        switch (opcao) {
+        switch (Opcao) {
             case 1: {
-                Dieta* novaComida = solicitarDados();
+                Dieta* Nova_Comida = Solicitar_Dados();
 
-                if (listaComidas == NULL) {
-                    listaComidas = novaComida;
+                if (Lista_Comidas == NULL) {
+                    Lista_Comidas = Nova_Comida;
                 } else {
-                    Dieta* atual = listaComidas;
+                    Dieta* Atual = Lista_Comidas;
 
-                    while (atual->proximo != NULL) {
-                        atual = atual->proximo;
+                    while (Atual->proximo != NULL) {
+                        Atual = Atual->proximo;
                     }
 
-                    atual->proximo = novaComida;
+                    Atual->proximo = Nova_Comida;
                 }
 
                 printf("Comida adicionada com sucesso.\n\n");
                 break;
             }
             case 2: {
-                listadecomidas(listaComidas);
+                Lista_de_Comidas(Lista_Comidas);
                 break;
             }
             case 0: {
@@ -87,7 +88,7 @@ void listadecomidas(Dieta* lista) {
                 break;
             }
         }
-    } while (opcao != 0);
+    } while (Opcao != 0);
 
 
 }
