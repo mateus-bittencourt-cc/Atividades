@@ -1,0 +1,321 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Estrutura para representar um artista
+typedef struct {
+    char nome[100];
+    char genero[100];
+    char local[100];
+    char **albums;
+    int num_albums;
+} Artista;
+
+// Protótipos de funções
+void lerArtistas(char *nomeArquivo, Artista **lista, int *numArtistas);
+void imprimirArtistas(Artista *lista, int numArtistas);
+void inserirArtista(Artista **lista, int *numArtistas, Artista novoArtista);
+void removerArtista(Artista **lista, int *numArtistas, char *nome);
+void editarArtista(Artista *lista, int numArtistas, char *nome);
+int buscarArtistaBinario(Artista *lista, int numArtistas, char *nome);
+void buscarAlbumSequencial(Artista *lista, int numArtistas, char *album);
+
+int main() {
+    Artista *artistas = NULL;
+    int numArtistas = 0;
+
+    lerArtistas("artistas.txt", &artistas, &numArtistas);
+
+    int opcao;
+    do {
+        printf("\nMenu:\n");
+        printf("1. Inserir novo artista\n");
+        printf("2. Remover artista\n");
+        printf("3. Editar artista\n");
+        printf("4. Buscar artista por nome (binário)\n");
+        printf("5. Buscar álbum de artista (sequencial)\n");
+        printf("6. Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+        getchar(); // Limpa o buffer do teclado
+
+        switch (opcao) {
+            case 1: {
+                Artista novoArtista;
+                printf("Nome do artista: ");
+                fgets(novoArtista.nome, sizeof(novoArtista.nome), stdin);
+                novoArtista.nome[strcspn(novoArtista.nome, "\n")] = '\0'; // Remove a quebra de linha
+                printf("Gênero musical: ");
+                fgets(novoArtista.genero, sizeof(novoArtista.genero), stdin);
+                novoArtista.genero[strcspn(novoArtista.genero, "\n")] = '\0'; // Remove a quebra de linha
+                printf("Local de criação/nascimento: ");
+                fgets(novoArtista.local, sizeof(novoArtista.local), stdin);
+                novoArtista.local[strcspn(novoArtista.local, "\n")] = '\0'; // Remove a quebra de linha
+                printf("Número de álbuns: ");
+                scanf("%d", &novoArtista.num_albums);
+                getchar(); // Limpa o buffer do teclado
+
+                if (novoArtista.num_albums > 0) {
+                    novoArtista.albums = (char **)malloc(novoArtista.num_albums * sizeof(char *));
+                    for (int i = 0; i < novoArtista.num_albums; i++) {
+                        novoArtista.albums[i] = (char *)malloc(100 * sizeof(char));
+                        printf("Álbum %d: ", i + 1);
+                        fgets(novoArtista.albums[i], 100, stdin);
+                        novoArtista.albums[i][strcspn(novoArtista.albums[i], "\n")] = '\0'; // Remove a quebra de linha
+                    }
+                } else {
+                    novoArtista.albums = NULL;
+                }
+
+                inserirArtista(&artistas, &numArtistas, novoArtista);
+                break;
+            }
+            case 2: {
+                char nome[100];
+                printf("Nome do artista a ser removido: ");
+                fgets(nome, sizeof(nome), stdin);
+                nome[strcspn(nome, "\n")] = '\0'; // Remove a quebra de linha
+                removerArtista(&artistas, &numArtistas, nome);
+                break;
+            }
+            case 3: {
+                char nome[100];
+                printf("Nome do artista a ser editado: ");
+                fgets(nome, sizeof(nome), stdin);
+                nome[strcspn(nome, "\n")] = '\0'; // Remove a quebra de linha
+                editarArtista(artistas, numArtistas, nome);
+                break;
+            }
+            case 4: {
+                char nome[100];
+                printf("Nome do artista a ser buscado (busca binária): ");
+                fgets(nome, sizeof(nome), stdin);
+                nome[strcspn(nome, "\n")] = '\0'; // Remove a quebra de linha
+                int indice = buscarArtistaBinario(artistas, numArtistas, nome);
+                if (indice != -1) {
+                    printf("Artista encontrado:\n");
+                    printf("Nome: %s\n", artistas[indice].nome);
+                    printf("Gênero: %s\n", artistas[indice].genero);
+                    printf("Local: %s\n", artistas[indice].local);
+                } else {
+                    printf("Artista não encontrado.\n");
+                }
+                break;
+            }
+            case 5: {
+                char album[100];
+                printf("Álbum a ser buscado (busca sequencial): ");
+                fgets(album, sizeof(album), stdin);
+                album[strcspn(album, "\n")] = '\0'; // Remove a quebra de linha
+                buscarAlbumSequencial(artistas, numArtistas, album);
+                break;
+            }
+            case 6:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opção inválida!\n");
+        }
+    } while (opcao != 6);
+
+    // Liberar memória alocada para álbuns
+    for (int i = 0; i < numArtistas; i++) {
+        if (artistas[i].albums != NULL) {
+            for (int j = 0; j < artistas[i].num_albums; j++) {
+                free(artistas[i].albums[j]);
+            }
+            free(artistas[i].albums);
+        }
+    }
+
+    // Liberar memória alocada para artistas
+    free(artistas);
+
+    return 0;
+}
+
+void lerArtistas(char *nomeArquivo, Artista **lista, int *numArtistas) {
+    FILE *arquivo = fopen(nomeArquivo, "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo %s.\n", nomeArquivo);
+        exit(1);
+    }
+
+    Artista *artistas = NULL;
+    int numArtistasMax = 10;
+    *lista = (Artista *)malloc(numArtistasMax * sizeof(Artista));
+    *numArtistas = 0;
+
+    char linha[100];
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        if (strcmp(linha, "==========\n") == 0) {
+            if (*numArtistas == numArtistasMax) {
+                numArtistasMax *= 2;
+                *lista = (Artista *)realloc(*lista, numArtistasMax * sizeof(Artista));
+            }
+            (*lista)[*numArtistas].albums = NULL;
+            (*numArtistas)++;
+        } else {
+            switch ((*numArtistas % 4)) {
+                case 1:
+                    strcpy((*lista)[*numArtistas - 1].nome, linha);
+                    break;
+                case 2:
+                    strcpy((*lista)[*numArtistas - 1].genero, linha);
+                    break;
+                case 3:
+                    strcpy((*lista)[*numArtistas - 1].local, linha);
+                    break;
+                case 0: {
+                    int numAlbums = (*numArtistas - 1) % numArtistasMax;
+                    if (numAlbums == 0) {
+                        (lista)[*numArtistas - 1].albums = (char *)malloc(1 * sizeof(char *));
+                    } else {
+                        (lista)[*numArtistas - 1].albums = (char *)realloc((*lista)[*numArtistas - 1].albums,
+                                                                            (numAlbums + 1) * sizeof(char *));
+                    }
+                    (*lista)[*numArtistas - 1].albums[numAlbums] = strdup(linha);
+                    break;
+                }
+            }
+        }
+    }
+
+    fclose(arquivo);
+}
+
+void imprimirArtistas(Artista *lista, int numArtistas) {
+    for (int i = 0; i < numArtistas; i++) {
+        printf("Nome: %s\n", lista[i].nome);
+        printf("Gênero: %s\n", lista[i].genero);
+        printf("Local: %s\n", lista[i].local);
+        printf("Álbuns:\n");
+        for (int j = 0; j < lista[i].num_albums; j++) {
+            printf("- %s\n", lista[i].albums[j]);
+        }
+        printf("==========\n");
+    }
+}
+
+void inserirArtista(Artista **lista, int *numArtistas, Artista novoArtista) {
+    if (*numArtistas == 0) {
+        *lista = (Artista *)malloc(sizeof(Artista));
+        (*lista)[0] = novoArtista;
+        (*numArtistas)++;
+        return;
+    }
+
+    int indiceInsercao = 0;
+    while (indiceInsercao < *numArtistas && strcmp((*lista)[indiceInsercao].nome, novoArtista.nome) < 0) {
+        indiceInsercao++;
+    }
+
+    *lista = (Artista *)realloc(*lista, (*numArtistas + 1) * sizeof(Artista));
+
+    for (int i = *numArtistas; i > indiceInsercao; i--) {
+        (*lista)[i] = (*lista)[i - 1];
+    }
+
+    (*lista)[indiceInsercao] = novoArtista;
+    (*numArtistas)++;
+}
+
+void removerArtista(Artista **lista, int *numArtistas, char *nome) {
+    int indiceRemocao = -1;
+    for (int i = 0; i < *numArtistas; i++) {
+        if (strcmp((*lista)[i].nome, nome) == 0) {
+            indiceRemocao = i;
+            break;
+        }
+    }
+
+    if (indiceRemocao != -1) {
+        free((*lista)[indiceRemocao].albums);
+        for (int i = indiceRemocao; i < *numArtistas - 1; i++) {
+            (*lista)[i] = (*lista)[i + 1];
+        }
+        (*numArtistas)--;
+        *lista = (Artista *)realloc(*lista, (*numArtistas) * sizeof(Artista));
+        printf("Artista removido com sucesso.\n");
+    } else {
+        printf("Artista não encontrado.\n");
+    }
+}
+
+void editarArtista(Artista *lista, int numArtistas, char *nome) {
+    int indiceEdicao = -1;
+    for (int i = 0; i < numArtistas; i++) {
+        if (strcmp(lista[i].nome, nome) == 0) {
+            indiceEdicao = i;
+            break;
+        }
+    }
+
+    if (indiceEdicao != -1) {
+        printf("Novo nome: ");
+        fgets(lista[indiceEdicao].nome, sizeof(lista[indiceEdicao].nome), stdin);
+        lista[indiceEdicao].nome[strcspn(lista[indiceEdicao].nome, "\n")] = '\0'; // Remove a quebra de linha
+        printf("Novo gênero musical: ");
+        fgets(lista[indiceEdicao].genero, sizeof(lista[indiceEdicao].genero), stdin);
+        lista[indiceEdicao].genero[strcspn(lista[indiceEdicao].genero, "\n")] = '\0'; // Remove a quebra de linha
+        printf("Novo local de criação/nascimento: ");
+        fgets(lista[indiceEdicao].local, sizeof(lista[indiceEdicao].local), stdin);
+        lista[indiceEdicao].local[strcspn(lista[indiceEdicao].local, "\n")] = '\0'; // Remove a quebra de linha
+        printf("Número de álbuns: ");
+        scanf("%d", &lista[indiceEdicao].num_albums);
+        getchar(); // Limpa o buffer do teclado
+
+        if (lista[indiceEdicao].num_albums > 0) {
+            for (int i = 0; i < lista[indiceEdicao].num_albums; i++) {
+                printf("Álbum %d: ", i + 1);
+                fgets(lista[indiceEdicao].albums[i], 100, stdin);
+                lista[indiceEdicao].albums[i][strcspn(lista[indiceEdicao].albums[i], "\n")] = '\0'; // Remove a quebra de linha
+            }
+        } else {
+            lista[indiceEdicao].albums = NULL;
+        }
+
+        printf("Artista editado com sucesso.\n");
+    } else {
+        printf("Artista não encontrado.\n");
+    }
+}
+
+int buscarArtistaBinario(Artista *lista, int numArtistas, char *nome) {
+    int inicio = 0;
+    int fim = numArtistas - 1;
+
+    while (inicio <= fim) {
+        int meio = (inicio + fim) / 2;
+        int comparacao = strcmp(lista[meio].nome, nome);
+
+        if (comparacao == 0) {
+            return meio;
+        } else if (comparacao < 0) {
+            inicio = meio + 1;
+        } else {
+            fim = meio - 1;
+        }
+    }
+
+    return -1; // Artista não encontrado
+}
+
+void buscarAlbumSequencial(Artista *lista, int numArtistas, char *album) {
+    int encontrados = 0;
+    for (int i = 0; i < numArtistas; i++) {
+        for (int j = 0; j < lista[i].num_albums; j++) {
+            if (strstr(lista[i].albums[j], album) != NULL) {
+                if (encontrados == 0) {
+                    printf("Álbuns encontrados:\n");
+                }
+                printf("- %s (%s)\n", lista[i].albums[j], lista[i].nome);
+                encontrados++;
+            }
+        }
+    }
+
+    if (encontrados == 0) {
+        printf("Nenhum álbum encontrado com o nome '%s'.\n", album);
+    }
+}
