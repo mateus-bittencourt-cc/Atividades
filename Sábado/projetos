@@ -147,6 +147,7 @@ void lerArtistas(char *nomeArquivo, Artista **lista, int *numArtistas) {
     *numArtistas = 0;
 
     char linha[100];
+    int numAlbums = 0;  // Adicionamos uma variável para rastrear o número de álbuns do artista atual
     while (fgets(linha, sizeof(linha), arquivo)) {
         if (strcmp(linha, "==========\n") == 0) {
             if (*numArtistas == numArtistasMax) {
@@ -154,6 +155,8 @@ void lerArtistas(char *nomeArquivo, Artista **lista, int *numArtistas) {
                 *lista = (Artista *)realloc(*lista, numArtistasMax * sizeof(Artista));
             }
             (*lista)[*numArtistas].albums = NULL;
+            (*lista)[*numArtistas].num_albums = numAlbums;  // Atualizamos o número de álbuns para o artista atual
+            numAlbums = 0;  // Reinicializamos o número de álbuns para o próximo artista
             (*numArtistas)++;
         } else {
             switch ((*numArtistas % 4)) {
@@ -166,23 +169,23 @@ void lerArtistas(char *nomeArquivo, Artista **lista, int *numArtistas) {
                 case 3:
                     strcpy((*lista)[*numArtistas - 1].local, linha);
                     break;
-                case 0: {
-                    int numAlbums = (*numArtistas - 1) % numArtistasMax;
+                case 0:
                     if (numAlbums == 0) {
-                        (lista)[*numArtistas - 1].albums = (char *)malloc(1 * sizeof(char *));
+                        (*lista)[*numArtistas - 1].albums = (char **)malloc(1 * sizeof(char *));
                     } else {
-                        (lista)[*numArtistas - 1].albums = (char *)realloc((*lista)[*numArtistas - 1].albums,
-                                                                            (numAlbums + 1) * sizeof(char *));
+                        (*lista)[*numArtistas - 1].albums = (char **)realloc((*lista)[*numArtistas - 1].albums,
+                                                                             (numAlbums + 1) * sizeof(char *));
                     }
                     (*lista)[*numArtistas - 1].albums[numAlbums] = strdup(linha);
+                    numAlbums++;  // Incrementamos o número de álbuns para o artista atual
                     break;
-                }
             }
         }
     }
 
     fclose(arquivo);
 }
+
 
 void imprimirArtistas(Artista *lista, int numArtistas) {
     for (int i = 0; i < numArtistas; i++) {
@@ -314,6 +317,11 @@ void buscarAlbumSequencial(Artista *lista, int numArtistas, char *album) {
             }
         }
     }
+
+    if (encontrados == 0) {
+        printf("Nenhum álbum encontrado com o nome '%s'.\n", album);
+    }
+}
 
     if (encontrados == 0) {
         printf("Nenhum álbum encontrado com o nome '%s'.\n", album);
