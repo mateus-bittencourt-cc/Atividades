@@ -1,1 +1,257 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+struct Node {
+    char artist[100];
+    char song[100];
+    struct Node* next;
+    struct Node* prev;
+};
+
+struct Playlist {
+    struct Node* head;
+    struct Node* current;
+};
+
+struct Node* createNode(char artist[], char song[]) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode != NULL) {
+        strcpy(newNode->artist, artist);
+        strcpy(newNode->song, song);
+        newNode->next = NULL;
+        newNode->prev = NULL;
+    }
+    return newNode;
+}
+
+void addSong(struct Playlist* playlist, char artist[], char song[]) {
+    struct Node* newSong = createNode(artist, song);
+    if (newSong == NULL) {
+        printf("Erro ao criar nó para a música.\n");
+        return;
+    }
+    if (playlist->head == NULL) {
+        playlist->head = newSong;
+        newSong->next = newSong;
+        newSong->prev = newSong;
+        playlist->current = newSong;
+    } else {
+        newSong->next = playlist->head;
+        newSong->prev = playlist->head->prev;
+        playlist->head->prev->next = newSong;
+        playlist->head->prev = newSong;
+    }
+}
+
+void displayOrder(struct Playlist* playlist) {
+    if (playlist->head == NULL) {
+        printf("A playlist está vazia.\n");
+        return;
+    }
+    struct Node* currentSong = playlist->head;
+    do {
+        printf("%s;%s\n", currentSong->artist, currentSong->song);
+        currentSong = currentSong->next;
+    } while (currentSong != playlist->head);
+}
+
+void displaySorted(struct Playlist* playlist) {
+    if (playlist->head == NULL) {
+        printf("A playlist está vazia.\n");
+        return;
+    }
+
+    struct Node* sortedList = NULL;
+    struct Node* currentSong = playlist->head;
+    do {
+        struct Node* newSong = createNode(currentSong->artist, currentSong->song);
+        if (newSong == NULL) {
+            printf("Erro ao criar nó para a música.\n");
+            return;
+        }
+
+        if (sortedList == NULL) {
+            sortedList = newSong;
+            newSong->next = newSong;
+            newSong->prev = newSong;
+        } else {
+            struct Node* current = sortedList;
+            while (strcmp(newSong->song, current->song) > 0 && current->next != sortedList) {
+                current = current->next;
+            }
+            newSong->next = current->next;
+            newSong->prev = current;
+            current->next->prev = newSong;
+            current->next = newSong;
+        }
+
+        currentSong = currentSong->next;
+    } while (currentSong != playlist->head);
+
+    currentSong = sortedList;
+    do {
+        printf("%s;%s\n", currentSong->artist, currentSong->song);
+        currentSong = currentSong->next;
+    } while (currentSong != sortedList);
+}
+
+void removeSong(struct Playlist* playlist, char artist[], char song[]) {
+    if (playlist->head == NULL) {
+        printf("A playlist está vazia.\n");
+        return;
+    }
+    struct Node* currentSong = playlist->head;
+    do {
+        if (strcmp(artist, currentSong->artist) == 0 && strcmp(song, currentSong->song) == 0) {
+            if (currentSong == playlist->head) {
+                playlist->head = currentSong->next;
+                if (playlist->head == currentSong) {
+                    playlist->head = NULL;
+                }
+            }
+            currentSong->prev->next = currentSong->next;
+            currentSong->next->prev = currentSong->prev;
+            free(currentSong);
+            return;
+        }
+        currentSong = currentSong->next;
+    } while (currentSong != playlist->head);
+    printf("Música não encontrada na playlist.\n");
+}
+
+void searchSong(struct Playlist* playlist, char searchTerm[]) {
+    if (playlist->head == NULL) {
+        printf("A playlist está vazia.\n");
+        return;
+    }
+    struct Node* currentSong = playlist->head;
+    int found = 0;
+    do {
+        if (strstr(currentSong->artist, searchTerm) || strstr(currentSong->song, searchTerm)) {
+            printf("Encontrada na playlist: %s;%s\n", currentSong->artist, currentSong->song);
+            found = 1;
+        }
+        currentSong = currentSong->next;
+    } while (currentSong != playlist->head);
+    if (!found) {
+        printf("Música não encontrada na playlist.\n");
+    }
+}
+
+void nextSong(struct Playlist* playlist) {
+    if (playlist->head == NULL) {
+        printf("A playlist está vazia.\n");
+        return;
+    }
+    playlist->current = playlist->current->next;
+    printf("Tocando agora: %s;%s\n", playlist->current->artist, playlist->current->song);
+}
+
+void prevSong(struct Playlist* playlist) {
+    if (playlist->head == NULL) {
+        printf("A playlist está vazia.\n");
+        return;
+    }
+    playlist->current = playlist->current->prev;
+    printf("Tocando agora: %s;%s\n", playlist->current->artist, playlist->current->song);
+}
+
+void savePlaylistToFile(struct Playlist* playlist, char fileName[]) {
+    FILE* file = fopen(fileName, "w");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo para salvar a playlist.\n");
+        return;
+    }
+    struct Node* currentSong = playlist->head;
+    do {
+        fprintf(file, "%s;%s\n", currentSong->artist, currentSong->song);
+        currentSong = currentSong->next;
+    } while (currentSong != playlist->head);
+    fclose(file);
+}
+
+void loadPlaylistFromFile(struct Playlist* playlist, char fileName[]) {
+    FILE* file = fopen(fileName, "r");
+    if (file == NULL) {
+        printf("O arquivo '%s' não foi encontrado.\n", fileName);
+        return;
+    }
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
+        char artist[100];
+        char song[100];
+        sscanf(line, "%[^;];%[^\n]", artist, song);
+        addSong(playlist, artist, song);
+    }
+    fclose(file);
+    playlist->current = playlist->head;
+}
+
+int main() {
+    struct Playlist playlist;
+    playlist.head = NULL;
+    playlist.current = NULL;
+    char fileName[] = "musicas.txt";
+    loadPlaylistFromFile(&playlist, fileName);
+
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Exibir playlist pela ordem de cadastro\n");
+        printf("2. Exibir playlist ordenada pelo nome das músicas\n");
+        printf("3. Inserir nova música\n");
+        printf("4. Remover música\n");
+        printf("5. Buscar música\n");
+        printf("6. Avançar para a próxima música\n");
+        printf("7. Retornar à música anterior\n");
+        printf("8. Sair\n");
+
+        int choice;
+        printf("Escolha uma opção: ");
+        scanf("%d", &choice);
+
+        char artist[100], song[100], searchTerm[100];
+
+        switch (choice) {
+            case 1:
+                displayOrder(&playlist);
+                break;
+            case 2:
+                displaySorted(&playlist);
+                break;
+            case 3:
+                printf("Digite o nome do artista: ");
+                scanf("%s", artist);
+                printf("Digite o nome da música: ");
+                scanf("%s", song);
+                addSong(&playlist, artist, song);
+                savePlaylistToFile(&playlist, fileName);
+                break;
+            case 4:
+                printf("Digite o nome do artista da música a ser removida: ");
+                scanf("%s", artist);
+                printf("Digite o nome da música a ser removida: ");
+                scanf("%s", song);
+                removeSong(&playlist, artist, song);
+                savePlaylistToFile(&playlist, fileName);
+                break;
+            case 5:
+                printf("Digite o termo de busca: ");
+                scanf("%s", searchTerm);
+                searchSong(&playlist, searchTerm);
+                break;
+            case 6:
+                nextSong(&playlist);
+                break;
+            case 7:
+                prevSong(&playlist);
+                break;
+            case 8:
+                savePlaylistToFile(&playlist, fileName);
+                printf("Playlist salva. Saindo.\n");
+                return 0;
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+        }
+    }
+}
