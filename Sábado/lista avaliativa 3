@@ -2,173 +2,193 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_SIZE 100
-
-// Definição da estrutura de livro
-typedef struct {
-    char titulo[50];
-    char autor[50];
+typedef struct Livro {
+    char nome[100];
+    char autor[100];
+    struct Livro* proximo;
 } Livro;
 
-// Definição da estrutura de fila
-typedef struct {
-    Livro livros[MAX_SIZE];
-    int frente, fundo;
-} Fila;
+void imprimirLivro(Livro* livro) {
+    printf("Livro: %s; Autor: %s\n", livro->nome, livro->autor);
+}
 
-// Definição da estrutura de pilha
-typedef struct {
-    Livro livros[MAX_SIZE];
-    int topo;
-} Pilha;
+void exibirFila(Livro* fila) {
+    Livro* atual = fila;
+    while (atual != NULL) {
+        imprimirLivro(atual);
+        atual = atual->proximo;
+    }
+}
 
-// Função para ler livros de um arquivo e preencher uma estrutura
-int lerLivrosDeArquivo(const char *nomeArquivo, Livro *livros, int *totalLivros) {
-    FILE *arquivo = fopen(nomeArquivo, "r");
-    if (arquivo == NULL) {
-        return 0;
+Livro* inserirNaFila(Livro* fila, char nome[], char autor[]) {
+    Livro* novoLivro = (Livro*)malloc(sizeof(Livro));
+    strcpy(novoLivro->nome, nome);
+    strcpy(novoLivro->autor, autor);
+    novoLivro->proximo = NULL;
+
+    if (fila == NULL) {
+        return novoLivro;
     }
 
-    int contador = 0;
-    char linha[100];
-    while (fgets(linha, sizeof(linha), arquivo) != NULL) {
-        char *titulo = strtok(linha, ";");
-        char *autor = strtok(NULL, ";");
+    Livro* atual = fila;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = novoLivro;
+    return fila;
+}
 
-        strcpy(livros[contador].titulo, titulo);
-        strcpy(livros[contador].autor, autor);
+Livro* removerDaFila(Livro* fila) {
+    if (fila == NULL) {
+        printf("A fila de livros está vazia.\n");
+        return NULL;
+    }
 
-        contador++;
+    Livro* livroRemovido = fila;
+    fila = fila->proximo;
+    printf("Livro removido da fila:\n");
+    imprimirLivro(livroRemovido);
+    free(livroRemovido);
+    return fila;
+}
+
+void exibirPilha(Livro* pilha) {
+    Livro* atual = pilha;
+    while (atual != NULL) {
+        imprimirLivro(atual);
+        atual = atual->proximo;
+    }
+}
+
+Livro* inserirNaPilha(Livro* pilha, char nome[], char autor[]) {
+    Livro* novoLivro = (Livro*)malloc(sizeof(Livro));
+    strcpy(novoLivro->nome, nome);
+    strcpy(novoLivro->autor, autor);
+    novoLivro->proximo = pilha;
+    return novoLivro;
+}
+
+Livro* removerDaPilha(Livro* pilha) {
+    if (pilha == NULL) {
+        printf("A pilha de livros está vazia.\n");
+        return NULL;
+    }
+
+    Livro* livroRemovido = pilha;
+    pilha = pilha->proximo;
+    printf("Livro removido da pilha:\n");
+    imprimirLivro(livroRemovido);
+    free(livroRemovido);
+    return pilha;
+}
+
+void salvarFilaEmArquivo(Livro* fila) {
+    FILE* arquivo = fopen("fila_de_livros.txt", "w");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para escrita.\n");
+        return;
+    }
+
+    Livro* atual = fila;
+    while (atual != NULL) {
+        fprintf(arquivo, "%s;%s\n", atual->nome, atual->autor);
+        atual = atual->proximo;
     }
 
     fclose(arquivo);
-    *totalLivros = contador;
-
-    return 1;
 }
 
-// Função para exibir a fila de livros
-void exibirFila(Fila *fila) {
-    printf("Fila de Livros:\n");
-    for (int i = fila->frente; i <= fila->fundo; i++) {
-        printf("%s, %s\n", fila->livros[i].titulo, fila->livros[i].autor);
+void salvarPilhaEmArquivo(Livro* pilha) {
+    FILE* arquivo = fopen("pilha_de_livros.txt", "w");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para escrita.\n");
+        return;
     }
-}
 
-// Função para inserir um livro na fila
-void inserirNaFila(Fila *fila, Livro livro) {
-    if (fila->fundo == MAX_SIZE - 1) {
-        printf("A fila está cheia. Não é possível inserir mais livros.\n");
-    } else {
-        fila->fundo++;
-        fila->livros[fila->fundo] = livro;
+    Livro* atual = pilha;
+    while (atual != NULL) {
+        fprintf(arquivo, "%s;%s\n", atual->nome, atual->autor);
+        atual = atual->proximo;
     }
-}
 
-// Função para remover um livro da fila
-void removerDaFila(Fila *fila) {
-    if (fila->frente > fila->fundo) {
-        printf("A fila está vazia. Não é possível remover livros.\n");
-    } else {
-        printf("Removendo livro da fila: %s, %s\n", fila->livros[fila->frente].titulo, fila->livros[fila->frente].autor);
-        fila->frente++;
-    }
-}
-
-// Função para exibir a pilha de livros
-void exibirPilha(Pilha *pilha) {
-    printf("Pilha de Livros:\n");
-    for (int i = pilha->topo; i >= 0; i--) {
-        printf("%s, %s\n", pilha->livros[i].titulo, pilha->livros[i].autor);
-    }
-}
-
-// Função para inserir um livro na pilha
-void inserirNaPilha(Pilha *pilha, Livro livro) {
-    if (pilha->topo == MAX_SIZE - 1) {
-        printf("A pilha está cheia. Não é possível inserir mais livros.\n");
-    } else {
-        pilha->topo++;
-        pilha->livros[pilha->topo] = livro;
-    }
-}
-
-// Função para remover um livro da pilha
-void removerDaPilha(Pilha *pilha) {
-    if (pilha->topo < 0) {
-        printf("A pilha está vazia. Não é possível remover livros.\n");
-    } else {
-        printf("Removendo livro da pilha: %s, %s\n", pilha->livros[pilha->topo].titulo, pilha->livros[pilha->topo].autor);
-        pilha->topo--;
-    }
+    fclose(arquivo);
 }
 
 int main() {
-    Livro livrosFila[MAX_SIZE];
-    Livro livrosPilha[MAX_SIZE];
-    int totalLivrosFila = 0;
-    int totalLivrosPilha = 0;
+    Livro* fila = NULL;
+    Livro* pilha = NULL;
 
-    Fila fila;
-    fila.frente = 0;
-    fila.fundo = -1;
+    FILE* arquivoFila = fopen("fila_de_livros.txt", "r");
+    if (arquivoFila != NULL) {
+        char linha[256];
+        while (fgets(linha, sizeof(linha), arquivoFila)) {
+            char nome[100], autor[100];
+            sscanf(linha, "%[^;];%s", nome, autor);
+            fila = inserirNaFila(fila, nome, autor);
+        }
+        fclose(arquivoFila);
+    }
 
-    Pilha pilha;
-    pilha.topo = -1;
-
-    if (!lerLivrosDeArquivo("fila_de_livros.txt", livrosFila, &totalLivrosFila) ||
-        !lerLivrosDeArquivo("pilha_de_livros.txt", livrosPilha, &totalLivrosPilha)) {
-        printf("Erro ao ler os arquivos de livros.\n");
-        return 1;
+    FILE* arquivoPilha = fopen("pilha_de_livros.txt", "r");
+    if (arquivoPilha != NULL) {
+        char linha[256];
+        while (fgets(linha, sizeof(linha), arquivoPilha)) {
+            char nome[100], autor[100];
+            sscanf(linha, "%[^;];%s", nome, autor);
+            pilha = inserirNaPilha(pilha, nome, autor);
+        }
+        fclose(arquivoPilha);
     }
 
     int opcao;
-    do {
-        printf("\nEscolha uma opção:\n");
-        printf("1. Exibir a fila de livros\n");
-        printf("2. Inserir novo livro na fila\n");
-        printf("3. Inserir novo livro na pilha\n");
+    while (1) {
+        printf("\n======Menu======\n");
+        printf("1. Exibir fila de livros\n");
+        printf("2. Inserir livro na fila\n");
+        printf("3. Inserir livro na pilha\n");
         printf("4. Remover livro da fila\n");
         printf("5. Remover livro da pilha\n");
         printf("6. Sair\n");
-        printf("Opção: ");
+        printf("Escolha uma opção: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
             case 1:
-                exibirFila(&fila);
+                printf("\nFila de Livros:\n");
+                exibirFila(fila);
                 break;
             case 2:
-                if (totalLivrosFila > fila.fundo) {
-                    inserirNaFila(&fila, livrosFila[fila.fundo + 1]);
-                    printf("Livro inserido na fila.\n");
-                    fila.fundo++;
-                } else {
-                    printf("Não há mais livros para inserir na fila.\n");
-                }
+                char nome[100], autor[100];
+                printf("Informe o nome do livro: ");
+                scanf("%s", nome);
+                printf("Informe o autor do livro: ");
+                scanf("%s", autor);
+                fila = inserirNaFila(fila, nome, autor);
+                salvarFilaEmArquivo(fila);
                 break;
             case 3:
-                if (totalLivrosPilha > pilha.topo) {
-                    inserirNaPilha(&pilha, livrosPilha[pilha.topo + 1]);
-                    printf("Livro inserido na pilha.\n");
-                    pilha.topo++;
-                } else {
-                    printf("Não há mais livros para inserir na pilha.\n");
-                }
+                printf("Informe o nome do livro: ");
+                scanf("%s", nome);
+                printf("Informe o autor do livro: ");
+                scanf("%s", autor);
+                pilha = inserirNaPilha(pilha, nome, autor);
+                salvarPilhaEmArquivo(pilha);
                 break;
             case 4:
-                removerDaFila(&fila);
+                fila = removerDaFila(fila);
+                salvarFilaEmArquivo(fila);
                 break;
             case 5:
-                removerDaPilha(&pilha);
+                pilha = removerDaPilha(pilha);
+                salvarPilhaEmArquivo(pilha);
                 break;
             case 6:
-                printf("Saindo do programa.\n");
-                break;
+                printf("Exit...\n");
+                return 0;
             default:
-                printf("Opção inválida. Tente novamente.\n");
+                printf("Opção inválida.\n");
         }
-    } while (opcao != 6);
+    }
 
     return 0;
 }
